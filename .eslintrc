@@ -1,0 +1,12 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": "standard",
+  "parser": "babel-eslint",
+  "settings": {
+    "import/resolver": {
+      "babel-module": {}
+    }
+  }
+}
