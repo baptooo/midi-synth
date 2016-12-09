@@ -1,6 +1,6 @@
 const context = new AudioContext()
 const masterGain = context.createGain()
-let nodes = []
+let oscillators = []
 let sustain = false
 
 masterGain.gain.value = 0.3
@@ -16,7 +16,10 @@ export function noteOn (note, velocity) {
   oscillator.frequency.value = frequencyFromNoteNumber(note)
   oscillator.connect(masterGain)
   oscillator.start(0)
-  nodes.push(oscillator)
+  oscillators.push({
+    oscillator,
+    frequency: frequencyFromNoteNumber(note)
+  })
 }
 
 export function noteOff (note, velocity) {
@@ -24,12 +27,12 @@ export function noteOff (note, velocity) {
     return false
   }
 
-  const frequency = frequencyFromNoteNumber(note)
+  const offFrequency = frequencyFromNoteNumber(note)
 
-  nodes = nodes.filter(node => {
-    if (Math.round(node.frequency.value) === Math.round(frequency)) {
-      node.stop()
-      node.disconnect()
+  oscillators = oscillators.filter(({ oscillator, frequency }) => {
+    if (Math.round(frequency) === Math.round(offFrequency)) {
+      oscillator.stop()
+      oscillator.disconnect()
       return false
     }
     return true
@@ -43,9 +46,17 @@ export function sustainOn () {
 export function sustainOff () {
   sustain = false
 
-  nodes = nodes.filter(node => {
-    node.stop()
-    node.disconnect()
+  oscillators = oscillators.filter(({ oscillator }) => {
+    oscillator.stop()
+    oscillator.disconnect()
     return false
+  })
+}
+
+export function pitchChange (value) {
+  // pitch = (value - 64)
+  const pitch = value - 64
+  oscillators.forEach(({ oscillator, frequency }) => {
+    oscillator.frequency.value = frequency + pitch
   })
 }

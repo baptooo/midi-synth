@@ -3,7 +3,8 @@ import {
   noteOn,
   noteOff,
   sustainOn,
-  sustainOff
+  sustainOff,
+  pitchChange
 } from './synth'
 
 let sustain = false
@@ -26,6 +27,10 @@ const onMidiMessage = ({data}) => {
       break
     case type === 176:
       velocity ? sustainOn() : sustainOff()
+      break
+    case type === 224:
+      pitchChange(velocity)
+      debug('pitch', velocity)
       break
     default:
       break

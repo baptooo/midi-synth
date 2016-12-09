@@ -78,6 +78,10 @@
 	    case type === 176:
 	      velocity ? (0, _synth.sustainOn)() : (0, _synth.sustainOff)();
 	      break;
+	    case type === 224:
+	      (0, _synth.pitchChange)(velocity);
+	      (0, _debug2.default)('pitch', velocity);
+	      break;
 	    default:
 	      break;
 	  }
@@ -126,9 +130,10 @@
 	exports.noteOff = noteOff;
 	exports.sustainOn = sustainOn;
 	exports.sustainOff = sustainOff;
+	exports.pitchChange = pitchChange;
 	var context = new AudioContext();
 	var masterGain = context.createGain();
-	var nodes = [];
+	var oscillators = [];
 	var sustain = false;
 
 	masterGain.gain.value = 0.3;
@@ -144,7 +149,10 @@
 	  oscillator.frequency.value = frequencyFromNoteNumber(note);
 	  oscillator.connect(masterGain);
 	  oscillator.start(0);
-	  nodes.push(oscillator);
+	  oscillators.push({
+	    oscillator: oscillator,
+	    frequency: frequencyFromNoteNumber(note)
+	  });
 	}
 
 	function noteOff(note, velocity) {
@@ -152,12 +160,15 @@
 	    return false;
 	  }
 
-	  var frequency = frequencyFromNoteNumber(note);
+	  var offFrequency = frequencyFromNoteNumber(note);
 
-	  nodes = nodes.filter(function (node) {
-	    if (Math.round(node.frequency.value) === Math.round(frequency)) {
-	      node.stop();
-	      node.disconnect();
+	  oscillators = oscillators.filter(function (_ref) {
+	    var oscillator = _ref.oscillator,
+	        frequency = _ref.frequency;
+
+	    if (Math.round(frequency) === Math.round(offFrequency)) {
+	      oscillator.stop();
+	      oscillator.disconnect();
 	      return false;
 	    }
 	    return true;
@@ -171,10 +182,23 @@
 	function sustainOff() {
 	  sustain = false;
 
-	  nodes = nodes.filter(function (node) {
-	    node.stop();
-	    node.disconnect();
+	  oscillators = oscillators.filter(function (_ref2) {
+	    var oscillator = _ref2.oscillator;
+
+	    oscillator.stop();
+	    oscillator.disconnect();
 	    return false;
+	  });
+	}
+
+	function pitchChange(value) {
+	  // pitch = (value - 64)
+	  var pitch = value - 64;
+	  oscillators.forEach(function (_ref3) {
+	    var oscillator = _ref3.oscillator,
+	        frequency = _ref3.frequency;
+
+	    oscillator.frequency.value = frequency + pitch;
 	  });
 	}
 
