@@ -24,6 +24,9 @@ module.exports = {
     inline: true
   },
   plugins: [
-    new HTMLWebpackPlugin()
+    new HTMLWebpackPlugin({
+      title: 'Midi Synth',
+      template: 'client/index.html'
+    })
   ]
 }

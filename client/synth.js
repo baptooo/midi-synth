@@ -1,25 +1,46 @@
 const context = new AudioContext()
-const masterGain = context.createGain()
+const releaseDelay = 10
 let oscillators = []
 let sustain = false
-
-masterGain.gain.value = 0.3
-masterGain.connect(context.destination)
 
 const frequencyFromNoteNumber = (note) => (
   440 * Math.pow(2, (note - 69) / 12)
 )
 
-export function noteOn (note, velocity) {
+export function noteOn (note, velocity, type = 'triangle') {
   const oscillator = context.createOscillator()
-  oscillator.type = 'triangle'
+  const gain = context.createGain()
+
+  oscillator.type = type
   oscillator.frequency.value = frequencyFromNoteNumber(note)
-  oscillator.connect(masterGain)
+  gain.gain.value = velocity / 100
+
+  gain.connect(context.destination)
+  oscillator.connect(gain)
   oscillator.start(0)
   oscillators.push({
     oscillator,
+    gain,
     frequency: frequencyFromNoteNumber(note)
   })
+}
+
+const killOscillator = ({ oscillator, gain }) => {
+  const delay = setInterval(() => {
+    const value = gain.gain.value * 0.9
+
+    if (value <= 1 / 20) {
+      clearInterval(delay)
+
+      oscillator.stop()
+      oscillator.disconnect()
+      gain.disconnect()
+    } else {
+      gain.gain.value = value
+    }
+  }, releaseDelay)
+
+  return false
 }
 
 export function noteOff (note, velocity) {
@@ -29,10 +50,11 @@ export function noteOff (note, velocity) {
 
   const offFrequency = frequencyFromNoteNumber(note)
 
-  oscillators = oscillators.filter(({ oscillator, frequency }) => {
+  oscillators = oscillators.filter((oscillator) => {
+    const { frequency } = oscillator
+
     if (Math.round(frequency) === Math.round(offFrequency)) {
-      oscillator.stop()
-      oscillator.disconnect()
+      killOscillator(oscillator)
       return false
     }
     return true
@@ -46,11 +68,7 @@ export function sustainOn () {
 export function sustainOff () {
   sustain = false
 
-  oscillators = oscillators.filter(({ oscillator }) => {
-    oscillator.stop()
-    oscillator.disconnect()
-    return false
-  })
+  oscillators = oscillators.filter(killOscillator)
 }
 
 export function pitchChange (value) {

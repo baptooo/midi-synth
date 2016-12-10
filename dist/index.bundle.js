@@ -48,13 +48,9 @@
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	var _debug = __webpack_require__(1);
-
-	var _debug2 = _interopRequireDefault(_debug);
+	var _ui = __webpack_require__(1);
 
 	var _synth = __webpack_require__(2);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var sustain = false;
 
@@ -66,21 +62,23 @@
 	      note = _data[1],
 	      velocity = _data[2];
 
+	  velocity *= 0.5;
+
 	  switch (true) {
 	    case type === 144:
-	      (0, _synth.noteOn)(note, velocity);
-	      (0, _debug2.default)(note, velocity);
+	      (0, _synth.noteOn)(note, velocity, (0, _ui.getOscillatorType)());
+	      (0, _ui.log)(note, velocity);
 	      break;
 	    case type === 128 && !sustain:
 	      (0, _synth.noteOff)(note, velocity);
-	      (0, _debug2.default)(note, velocity);
+	      (0, _ui.log)(note, velocity);
 	      break;
 	    case type === 176:
 	      velocity ? (0, _synth.sustainOn)() : (0, _synth.sustainOff)();
 	      break;
 	    case type === 224:
 	      (0, _synth.pitchChange)(velocity);
-	      (0, _debug2.default)('pitch', velocity);
+	      (0, _ui.log)('pitch', velocity);
 	      break;
 	    default:
 	      break;
@@ -105,17 +103,33 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.log = log;
+	exports.getOscillatorType = getOscillatorType;
+	var list = document.getElementById('log');
+	var oscillatorTypes = document.getElementById('oscillatorTypes');
+	var total = document.getElementById('total');
+	var midiMessages = 0;
 
-	exports.default = function (note, velocity) {
+	if (localStorage.oscillatorType) {
+	  oscillatorTypes.value = localStorage.oscillatorType;
+	}
+
+	oscillatorTypes.addEventListener('change', function () {
+	  localStorage.oscillatorType = oscillatorTypes.value;
+	});
+
+	function log(note, velocity) {
 	  while (list.children.length > 25) {
 	    list.firstChild.remove();
 	  }
 
+	  total.innerHTML = midiMessages++;
 	  list.innerHTML += '\n    <div>\n      <span>Note: ' + note + '</span>\n      <span>Velocity: ' + velocity + '</span>\n    </div>\n  ';
-	};
+	}
 
-	var list = document.createElement('ul');
-	document.body.appendChild(list);
+	function getOscillatorType() {
+	  return oscillatorTypes.value;
+	}
 
 /***/ },
 /* 2 */
@@ -132,28 +146,54 @@
 	exports.sustainOff = sustainOff;
 	exports.pitchChange = pitchChange;
 	var context = new AudioContext();
-	var masterGain = context.createGain();
+	var releaseDelay = 10;
 	var oscillators = [];
 	var sustain = false;
-
-	masterGain.gain.value = 0.3;
-	masterGain.connect(context.destination);
 
 	var frequencyFromNoteNumber = function frequencyFromNoteNumber(note) {
 	  return 440 * Math.pow(2, (note - 69) / 12);
 	};
 
 	function noteOn(note, velocity) {
+	  var type = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'triangle';
+
 	  var oscillator = context.createOscillator();
-	  oscillator.type = 'triangle';
+	  var gain = context.createGain();
+
+	  oscillator.type = type;
 	  oscillator.frequency.value = frequencyFromNoteNumber(note);
-	  oscillator.connect(masterGain);
+	  gain.gain.value = velocity / 100;
+
+	  gain.connect(context.destination);
+	  oscillator.connect(gain);
 	  oscillator.start(0);
 	  oscillators.push({
 	    oscillator: oscillator,
+	    gain: gain,
 	    frequency: frequencyFromNoteNumber(note)
 	  });
 	}
+
+	var killOscillator = function killOscillator(_ref) {
+	  var oscillator = _ref.oscillator,
+	      gain = _ref.gain;
+
+	  var delay = setInterval(function () {
+	    var value = gain.gain.value * 0.9;
+
+	    if (value <= 1 / 20) {
+	      clearInterval(delay);
+
+	      oscillator.stop();
+	      oscillator.disconnect();
+	      gain.disconnect();
+	    } else {
+	      gain.gain.value = value;
+	    }
+	  }, releaseDelay);
+
+	  return false;
+	};
 
 	function noteOff(note, velocity) {
 	  if (sustain) {
@@ -162,13 +202,12 @@
 
 	  var offFrequency = frequencyFromNoteNumber(note);
 
-	  oscillators = oscillators.filter(function (_ref) {
-	    var oscillator = _ref.oscillator,
-	        frequency = _ref.frequency;
+	  oscillators = oscillators.filter(function (oscillator) {
+	    var frequency = oscillator.frequency;
+
 
 	    if (Math.round(frequency) === Math.round(offFrequency)) {
-	      oscillator.stop();
-	      oscillator.disconnect();
+	      killOscillator(oscillator);
 	      return false;
 	    }
 	    return true;
@@ -182,21 +221,15 @@
 	function sustainOff() {
 	  sustain = false;
 
-	  oscillators = oscillators.filter(function (_ref2) {
-	    var oscillator = _ref2.oscillator;
-
-	    oscillator.stop();
-	    oscillator.disconnect();
-	    return false;
-	  });
+	  oscillators = oscillators.filter(killOscillator);
 	}
 
 	function pitchChange(value) {
 	  // pitch = (value - 64)
 	  var pitch = value - 64;
-	  oscillators.forEach(function (_ref3) {
-	    var oscillator = _ref3.oscillator,
-	        frequency = _ref3.frequency;
+	  oscillators.forEach(function (_ref2) {
+	    var oscillator = _ref2.oscillator,
+	        frequency = _ref2.frequency;
 
 	    oscillator.frequency.value = frequency + pitch;
 	  });

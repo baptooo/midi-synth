@@ -1,9 +1,22 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Webpack App</title>
-  </head>
-  <body>
-  <script type="text/javascript" src="index.bundle.js"></script></body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+  <label for="oscillatorTypes">
+    Oscillator type
+    <select name="oscillatorTypes" id="oscillatorTypes">
+      <option value="sine">Sine</option>
+      <option value="square">Square</option>
+      <option value="sawtooth">Sawtooth</option>
+      <option value="triangle">Triangle</option>
+    </select>
+  </label>
+
+  <h2>Total midi messages : <span id="total"></span></h2>
+  <ul id="log"></ul>
+<script type="text/javascript" src="index.bundle.js"></script></body>
 </html>

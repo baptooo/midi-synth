@@ -1,4 +1,4 @@
-import debug from './debug'
+import { log, getOscillatorType } from './ui'
 import {
   noteOn,
   noteOff,
@@ -10,27 +10,29 @@ import {
 let sustain = false
 
 const onMidiMessage = ({data}) => {
-  const [
+  let [
     type,
     note,
     velocity
   ] = data
 
+  velocity *= 0.5
+
   switch (true) {
     case type === 144:
-      noteOn(note, velocity)
-      debug(note, velocity)
+      noteOn(note, velocity, getOscillatorType())
+      log(note, velocity)
       break
     case type === 128 && !sustain:
       noteOff(note, velocity)
-      debug(note, velocity)
+      log(note, velocity)
       break
     case type === 176:
       velocity ? sustainOn() : sustainOff()
       break
     case type === 224:
       pitchChange(velocity)
-      debug('pitch', velocity)
+      log('pitch', velocity)
       break
     default:
       break
