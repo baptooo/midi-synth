@@ -18,10 +18,10 @@ export function log (note, velocity) {
 
   total.innerHTML = midiMessages++
   list.innerHTML += `
-    <div>
+    <li>
       <span>Note: ${note}</span>
       <span>Velocity: ${velocity}</span>
-    </div>
+    </li>
   `
 }
 

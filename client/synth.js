@@ -1,3 +1,5 @@
+import * as waves from './waves'
+
 const context = new AudioContext()
 const releaseDelay = 10
 let oscillators = []
@@ -11,9 +13,23 @@ export function noteOn (note, velocity, type = 'triangle') {
   const oscillator = context.createOscillator()
   const gain = context.createGain()
 
-  oscillator.type = type
+  switch (type) {
+    case 'rhodes':
+    case 'organ':
+    case 'random':
+      const real = new Float32Array(waves[type])
+      const imag = new Float32Array(real.length)
+      oscillator.setPeriodicWave(
+        context.createPeriodicWave(real, imag)
+      )
+      break
+    default:
+      oscillator.type = type
+      break
+  }
+
   oscillator.frequency.value = frequencyFromNoteNumber(note)
-  gain.gain.value = velocity / 100
+  gain.gain.value = 0.3 // velocity / 100
 
   gain.connect(context.destination)
   oscillator.connect(gain)
