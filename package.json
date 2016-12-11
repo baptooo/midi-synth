@@ -1,14 +1,15 @@
 {
   "name": "midi-synth",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "index.js",
   "license": "MIT",
+  "private": true,
   "scripts": {
     "start": "webpack-dev-server --config-file webpack.config.js --content-base ./client",
     "build": "webpack --config-file webpack.config.js --content-base ./client",
     "lint": "eslint client",
     "precommit": "yarn run lint",
-    "prepush": "yarn run build"
+    "release": "yarn run build && yarn version"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",
