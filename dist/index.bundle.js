@@ -124,7 +124,7 @@
 	  }
 
 	  total.innerHTML = midiMessages++;
-	  list.innerHTML += '\n    <div>\n      <span>Note: ' + note + '</span>\n      <span>Velocity: ' + velocity + '</span>\n    </div>\n  ';
+	  list.innerHTML += '\n    <li>\n      <span>Note: ' + note + '</span>\n      <span>Velocity: ' + velocity + '</span>\n    </li>\n  ';
 	}
 
 	function getOscillatorType() {
@@ -133,7 +133,7 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
@@ -145,6 +145,13 @@
 	exports.sustainOn = sustainOn;
 	exports.sustainOff = sustainOff;
 	exports.pitchChange = pitchChange;
+
+	var _waves = __webpack_require__(3);
+
+	var waves = _interopRequireWildcard(_waves);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 	var context = new AudioContext();
 	var releaseDelay = 10;
 	var oscillators = [];
@@ -160,9 +167,21 @@
 	  var oscillator = context.createOscillator();
 	  var gain = context.createGain();
 
-	  oscillator.type = type;
+	  switch (type) {
+	    case 'rhodes':
+	    case 'organ':
+	    case 'random':
+	      var real = new Float32Array(waves[type]);
+	      var imag = new Float32Array(real.length);
+	      oscillator.setPeriodicWave(context.createPeriodicWave(real, imag));
+	      break;
+	    default:
+	      oscillator.type = type;
+	      break;
+	  }
+
 	  oscillator.frequency.value = frequencyFromNoteNumber(note);
-	  gain.gain.value = velocity / 100;
+	  gain.gain.value = 0.3; // velocity / 100
 
 	  gain.connect(context.destination);
 	  oscillator.connect(gain);
@@ -233,6 +252,25 @@
 
 	    oscillator.frequency.value = frequency + pitch;
 	  });
+	}
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var random = exports.random = [];
+	var rhodes = exports.rhodes = ['0.4', '0.8', '0.6', '0.6', '0.6', '0.6', '0.0', '0.8', '0.3', '1.0'];
+	var organ = exports.organ = ['0.2', '0.4', '0.0', '0.0', '0.9', '0.1', '0.1', '0.1', '0.2', '0.9'];
+
+	var size = 4;
+	for (var i = 0; i < size; i++) {
+	  random.push(Math.random());
+	  // random.push(i / size)
 	}
 
 /***/ }
