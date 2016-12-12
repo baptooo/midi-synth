@@ -13,10 +13,8 @@ export function noteOn (note, velocity, type = 'triangle') {
   const oscillator = context.createOscillator()
   const gain = context.createGain()
 
-  switch (type) {
-    case 'rhodes':
-    case 'organ':
-    case 'random':
+  switch (true) {
+    case type in waves:
       const real = new Float32Array(waves[type])
       const imag = new Float32Array(real.length)
       oscillator.setPeriodicWave(
