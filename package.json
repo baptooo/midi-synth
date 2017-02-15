@@ -9,9 +9,11 @@
     "build": "webpack --config-file webpack.config.js --content-base ./client",
     "lint": "eslint client",
     "precommit": "yarn run lint",
-    "release": "yarn run build && yarn version"
+    "release": "yarn run build && yarn version",
+    "doc": "gitbook serve ./gitbook"
   },
   "devDependencies": {
+    "babel-cli": "^6.22.2",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
     "babel-loader": "^6.2.8",
@@ -20,6 +22,8 @@
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.4.0",
     "eslint-plugin-standard": "^2.0.1",
+    "gitbook": "^3.2.2",
+    "gitbook-cli": "^2.3.0",
     "html-webpack-plugin": "^2.24.1",
     "husky": "^0.11.9",
     "webpack": "^1.13.3"

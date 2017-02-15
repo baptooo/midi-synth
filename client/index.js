@@ -16,6 +16,11 @@ const onMidiMessage = ({data}) => {
     velocity
   ] = data
 
+  if (__MIDI__) {
+    log(note, velocity)
+    return false
+  }
+
   velocity *= 0.5
 
   switch (true) {

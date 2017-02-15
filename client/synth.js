@@ -1,7 +1,7 @@
 import * as waves from './waves'
 
 const context = new AudioContext()
-const releaseDelay = 10
+const reverb = 5
 let oscillators = []
 let sustain = false
 
@@ -12,13 +12,12 @@ const frequencyFromNoteNumber = (note) => (
 export function noteOn (note, velocity, type = 'triangle') {
   const oscillator = context.createOscillator()
   const gain = context.createGain()
+  const frequency = frequencyFromNoteNumber(note)
 
   switch (true) {
     case type in waves:
-      const real = new Float32Array(waves[type])
-      const imag = new Float32Array(real.length)
       oscillator.setPeriodicWave(
-        context.createPeriodicWave(real, imag)
+        waves.getPeriodicWave(waves[type], context),
       )
       break
     default:
@@ -26,16 +25,16 @@ export function noteOn (note, velocity, type = 'triangle') {
       break
   }
 
-  oscillator.frequency.value = frequencyFromNoteNumber(note)
+  oscillator.frequency.value = frequency
   gain.gain.value = 0.3 // velocity / 100
 
   gain.connect(context.destination)
   oscillator.connect(gain)
-  oscillator.start(0)
+  oscillator.start(1)
   oscillators.push({
     oscillator,
     gain,
-    frequency: frequencyFromNoteNumber(note)
+    frequency
   })
 }
 
@@ -52,7 +51,7 @@ const killOscillator = ({ oscillator, gain }) => {
     } else {
       gain.gain.value = value
     }
-  }, releaseDelay)
+  }, reverb)
 
   return false
 }
@@ -86,8 +85,7 @@ export function sustainOff () {
 }
 
 export function pitchChange (value) {
-  // pitch = (value - 64)
-  const pitch = value - 64
+  const pitch = value - 32
   oscillators.forEach(({ oscillator, frequency }) => {
     oscillator.frequency.value = frequency + pitch
   })

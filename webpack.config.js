@@ -1,4 +1,5 @@
-const path = require('path');
+const path = require('path')
+const webpack = require('webpack')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
@@ -24,6 +25,9 @@ module.exports = {
     inline: true
   },
   plugins: [
+    new webpack.DefinePlugin({
+      '__MIDI__': process.env.NODE_ENV === 'midi'
+    }),
     new HTMLWebpackPlugin({
       title: 'Midi Synth',
       template: 'client/index.html'
