@@ -1,6 +1,6 @@
 {
   "name": "midi-synth",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "main": "index.js",
   "license": "MIT",
   "private": true,
@@ -10,8 +10,8 @@
     "build:doc": "gitbook build ./gitbook ./docs",
     "lint": "eslint client",
     "precommit": "yarn run lint",
-    "preversion": "yarn run lint && yarn run build",
-    "version": "yarn run build:doc && git add -A ./docs",
+    "preversion": "yarn run lint",
+    "version": "yarn run build && yarn run build:doc && git add -A ./docs",
     "postversion": "git push && git push --tags",
     "release": "yarn version",
     "doc": "gitbook serve ./gitbook"
