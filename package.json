@@ -9,7 +9,10 @@
     "build": "webpack --config-file webpack.config.js --content-base ./client",
     "lint": "eslint client",
     "precommit": "yarn run lint",
-    "release": "yarn run build && yarn version",
+    "preversion": "yarn run lint && yarn run build",
+    "version": "gitbook build ./gitbook ./docs && git add -A ./docs",
+    "postversion": "git push && git push --tags",
+    "release": "yarn version",
     "doc": "gitbook serve ./gitbook"
   },
   "devDependencies": {
