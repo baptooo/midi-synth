@@ -11,7 +11,7 @@
     "lint": "eslint client",
     "precommit": "yarn run lint",
     "preversion": "yarn run lint",
-    "version": "yarn run build && yarn run build:doc && git add -A ./docs",
+    "version": "yarn run build && yarn run build:doc && git add -A ./docs ./dist",
     "postversion": "git push && git push --tags",
     "release": "yarn version",
     "doc": "gitbook serve ./gitbook"
