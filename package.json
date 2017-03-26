@@ -6,12 +6,13 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js --content-base ./client",
-    "build": "webpack --config webpack.config.js",
+    "build:dist": "webpack --config webpack.config.js",
     "build:doc": "gitbook build ./gitbook ./docs",
+    "build": "yarn run build:dist && yarn run build:doc",
     "lint": "eslint client",
     "precommit": "yarn run lint",
     "preversion": "yarn run lint",
-    "version": "yarn run build && yarn run build:doc && git add -A ./docs ./dist",
+    "version": "yarn run build && git add -A ./docs ./dist",
     "postversion": "git push && git push --tags",
     "release": "yarn version",
     "doc": "gitbook serve ./gitbook"
