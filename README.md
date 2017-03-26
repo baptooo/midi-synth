@@ -2,6 +2,10 @@
 
 This project is a sandbox for experimenting HTML5 WebAudio API and MIDI API
 
+## Documentation
+
+All the documentation is served by gitbook at this url [baptooo.github.io/midi-synth/](https://baptooo.github.io/midi-synth/)
+
 ## Getting started
 
 ### Install packages
