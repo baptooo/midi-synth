@@ -1,0 +1,440 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Synthesizer · GitBook</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.2">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="SYNTH.html" />
+    
+    
+    <link rel="prev" href="MIDI.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" data-path="../DEMO.html">
+            
+                <a href="../DEMO.html">
+            
+                    
+                    Demo
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" data-path="MIDI.html">
+            
+                <a href="MIDI.html">
+            
+                    
+                    Midi
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="MIDI.html">
+            
+                <a href="MIDI.html#parse-midi-inputs">
+            
+                    
+                    Parse MIDI inputs
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="MIDI.html">
+            
+                <a href="MIDI.html#messages-bus">
+            
+                    
+                    Messages bus
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.4" data-path="SYNTH.html">
+            
+                <a href="SYNTH.html">
+            
+                    
+                    Synthesizer
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="SYNTH.html">
+            
+                <a href="SYNTH.html#noteon">
+            
+                    
+                    noteOn
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="SYNTH.html">
+            
+                <a href="SYNTH.html#noteoff">
+            
+                    
+                    noteOff
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="SYNTH.html">
+            
+                <a href="SYNTH.html#killoscillator">
+            
+                    
+                    killOscillator
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.5" data-path="WAVES.html">
+            
+                <a href="WAVES.html">
+            
+                    
+                    Waves
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Synthesizer</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="synthesizer-synthjs">Synthesizer (synth.js)</h1>
+<p>The synthesizer is an api that exposes all the functions to produce the
+sounds associated to each different midi messages</p>
+<h2 id="initialization">Initialization</h2>
+<p>The minimum required to produce a sound is to create an <a href="http://devdocs.io/dom/audiocontext" target="_blank">AudioContext</a></p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> context = <span class="hljs-keyword">new</span> AudioContext()
+</code></pre>
+<h1 id="noteon">noteOn</h1>
+<pre><code class="lang-js"><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">noteOn</span> (<span class="hljs-params">note, velocity, type = &apos;triangle&apos;</span>) </span>{
+  <span class="hljs-keyword">const</span> oscillator = context.createOscillator()
+  <span class="hljs-keyword">const</span> gain = context.createGain()
+  <span class="hljs-keyword">const</span> frequency = frequencyFromNoteNumber(note)
+
+  oscillator.type = <span class="hljs-string">&apos;sine&apos;</span>
+  oscillator.frequency.value = frequency
+  gain.gain.value = <span class="hljs-number">0.3</span>
+
+  gain.connect(context.destination)
+  oscillator.connect(gain)
+  oscillator.start(<span class="hljs-number">1</span>)
+  oscillators.push({
+    oscillator,
+    gain,
+    frequency
+  })
+}
+</code></pre>
+<p><strong>oscillator</strong> is an instance of <a href="http://devdocs.io/dom/oscillatornode" target="_blank">OscillatorNode</a> that
+represents a periodic wave form and will allow us to produce a tone</p>
+<p><strong>gain</strong> is an instance of <a href="http://devdocs.io/dom/gainnode" target="_blank">GainNode</a> that
+will allow us to modify the volume of the context. It acts between an input and an output
+in order to modify the signal that will be used to produce a sound.</p>
+<p><strong>frequency</strong> is the result of the conversion of the midi note and the real sound frequency</p>
+<p>After what we can :</p>
+<ul>
+<li>connect the oscillator to the gain</li>
+<li>connect the gain to the context destination (speakers)</li>
+</ul>
+<p><strong>[Oscillators]</strong> -&gt; <strong>[Effects (Gain, Delay, Panner, etc.)]</strong> -&gt; <strong>[Context destination]</strong></p>
+<p>Each created oscillator is stored into an array</p>
+<h3 id="oscillator">Oscillator</h3>
+<p>In this example we will use the preset &apos;sine&apos; as its type. You can create your own
+periodic waves, we will talk about it in the <a href="WAVES.html">Waves</a> section.</p>
+<h3 id="gain">Gain</h3>
+<p>The value <strong>0.3</strong> that we assign means that the sound will be 30% higher</p>
+<h1 id="noteoff">noteOff</h1>
+<pre><code class="lang-js"><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">noteOff</span> (<span class="hljs-params">note, velocity</span>) </span>{
+  <span class="hljs-keyword">const</span> offFrequency = frequencyFromNoteNumber(note)
+
+  oscillators = oscillators.filter((oscillator) =&gt; {
+    <span class="hljs-keyword">const</span> { frequency } = oscillator
+
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.round(frequency) === <span class="hljs-built_in">Math</span>.round(offFrequency)) {
+      killOscillator(oscillator)
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+    }
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+  })
+}
+</code></pre>
+<p>This function will search for each active oscillator using the given note and kill it</p>
+<h1 id="killoscillator">killOscillator</h1>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> killOscillator = ({ oscillator, gain }) =&gt; {
+  oscillator.stop()
+  oscillator.disconnect()
+  gain.disconnect()
+
+  <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>
+}
+</code></pre>
+<p>This function is not exported but it is important to know that the oscillator will be correctly
+stopped and disconnected from the audio context. So whenever you release an action on the
+midi controller, it will be completely destroyed.</p>
+<h1 id="pitchchange">pitchChange</h1>
+<pre><code class="lang-js"><span class="hljs-keyword">export</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">pitchChange</span> (<span class="hljs-params">value</span>) </span>{
+  <span class="hljs-keyword">const</span> pitch = value - <span class="hljs-number">32</span>
+  oscillators.forEach(({ oscillator, frequency }) =&gt; {
+    oscillator.frequency.value = frequency + pitch
+  })
+}
+</code></pre>
+<p>Pitch change will adjust all oscillators with the given value</p>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="MIDI.html#messages-bus" class="navigation navigation-prev " aria-label="Previous page: Messages bus">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="SYNTH.html#noteon" class="navigation navigation-next " aria-label="Next page: noteOn">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Synthesizer","level":"1.4","depth":1,"next":{"title":"noteOn","level":"1.4.1","depth":2,"anchor":"#noteon","path":"api/SYNTH.md","ref":"api/SYNTH.md#noteon","articles":[]},"previous":{"title":"Messages bus","level":"1.3.2","depth":2,"anchor":"#messages-bus","path":"api/MIDI.md","ref":"api/MIDI.md#messages-bus","articles":[]},"dir":"ltr"},"config":{"gitbook":"*","theme":"default","variables":{},"plugins":[],"pluginsConfig":{"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"fontsettings":{"theme":"white","family":"sans","size":2},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"}},"file":{"path":"api/SYNTH.md","mtime":"2017-02-15T13:46:29.000Z","type":"markdown"},"gitbook":{"version":"3.2.2","time":"2017-03-26T08:26:04.887Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+

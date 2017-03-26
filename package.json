@@ -5,12 +5,13 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "webpack-dev-server --config-file webpack.config.js --content-base ./client",
-    "build": "webpack --config-file webpack.config.js --content-base ./client",
+    "start": "webpack-dev-server --config webpack.config.js --content-base ./client",
+    "build": "webpack --config webpack.config.js",
+    "build:doc": "gitbook build ./gitbook ./docs",
     "lint": "eslint client",
     "precommit": "yarn run lint",
     "preversion": "yarn run lint && yarn run build",
-    "version": "gitbook build ./gitbook ./docs && git add -A ./docs",
+    "version": "yarn run build:doc && git add -A ./docs",
     "postversion": "git push && git push --tags",
     "release": "yarn version",
     "doc": "gitbook serve ./gitbook"
@@ -29,6 +30,7 @@
     "gitbook-cli": "^2.3.0",
     "html-webpack-plugin": "^2.24.1",
     "husky": "^0.11.9",
-    "webpack": "^1.13.3"
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2"
   }
 }
